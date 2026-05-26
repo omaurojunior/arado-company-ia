@@ -1,0 +1,75 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Outfit", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-display: "Playfair Display", Georgia, serif;
+  --font-mono: "JetBrains Mono", monospace;
+  
+  --color-soil-50: #f5fbf6;
+  --color-soil-100: #eaf6ec;
+  --color-soil-200: #ccebcf;
+  --color-soil-600: #1b8a34;
+  --color-soil-800: #146c28;
+  --color-soil-950: #0a3d13;
+  
+  --color-moss-50: #edf7ef;
+  --color-moss-100: #daf0dd;
+  --color-moss-250: #88d494;
+  --color-moss-600: #14802c;
+  --color-moss-700: #106623;
+  --color-moss-850: #0a4d18;
+  --color-moss-950: #052a0a;
+}
+
+@layer base {
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--color-soil-50);
+    color: var(--color-moss-950);
+    overflow-x: hidden;
+  }
+}
+
+/* Custom flow scrollbars of organic field colors */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-soil-50);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-moss-250);
+  border-radius: 999px;
+  border: 1px solid var(--color-soil-50);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-moss-600);
+}
+
+/* Subtle wind drift animation */
+@keyframes drift {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(2%, 1%) scale(1.03); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+
+.animate-drift {
+  animation: drift 25s ease-in-out infinite;
+}
+
+/* Float of leaf */
+@keyframes float-leaf {
+  0% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-4px) rotate(2deg); }
+  100% { transform: translateY(0px) rotate(0deg); }
+}
+
+.animate-float-leaf {
+  animation: float-leaf 4s ease-in-out infinite;
+}
+
