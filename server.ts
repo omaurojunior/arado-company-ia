@@ -1,7 +1,7 @@
 import express from "express";
 import path from "path";
 import { createServer as createViteServer } from "vite";
-import { GoogleGenAI, Type } from "@google/genai";
+import { GoogleGenAI, Type, ThinkingLevel } from "@google/genai";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -101,7 +101,9 @@ function obterChaveAPI(): string {
         config: {
           systemInstruction,
           responseMimeType: "application/json",
-          maxOutputTokens: 1000, // Limita o máximo de tokens de saída para economizar dados e chaves gratuitas do produtor
+          thinkingConfig: {
+            thinkingLevel: ThinkingLevel.LOW // Utiliza raciocínio reduzido para economizar custo e tokens do produtor
+          },
           responseSchema: {
             type: Type.OBJECT,
             properties: {
