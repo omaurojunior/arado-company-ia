@@ -144,12 +144,19 @@ export default function App() {
         body: JSON.stringify(payload),
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Ocorreu um erro ao gerar conselho de manejo.");
+      const responseText = await response.text();
+      let parsedData: any;
+      try {
+        parsedData = JSON.parse(responseText);
+      } catch (e) {
+        throw new Error(`Resposta do servidor inválida (Crashed/Não é JSON): ${responseText.slice(0, 160)}`);
       }
 
-      const data: DiagnosticoResponse = await response.json();
+      if (!response.ok) {
+        throw new Error(parsedData.error || "Ocorreu um erro ao gerar conselho de manejo.");
+      }
+
+      const data: DiagnosticoResponse = parsedData;
       setResultado(data);
 
       const novoLaudo: DiagnosticoSalvo = {
