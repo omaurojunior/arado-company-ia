@@ -1,6 +1,5 @@
 import express from "express";
 import path from "path";
-import { GoogleGenAI, Type, ThinkingLevel } from "@google/genai";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -63,6 +62,7 @@ function obterChaveAPI(): string {
       }
 
       // Inicializa o SDK do Gemini de forma tardia (apenas quando necessário)
+      const { GoogleGenAI, Type, ThinkingLevel } = await import("@google/genai");
       const ai = new GoogleGenAI({
         apiKey: apiKey,
         httpOptions: {
@@ -186,8 +186,16 @@ function obterChaveAPI(): string {
 
   // Serve arquivos estáticos ou monta o middleware do Vite dependendo do ambiente
   async function setupServer() {
+    // Se estiver rodando na Vercel (Serverless), o roteamento de estáticos é feito pela própria CDN da Vercel.
+    // Evitamos carregar qualquer lógica do Vite para que o empacotamento da função não quebre nem exceda limite de tamanho.
+    if (process.env.VERCEL === "1") {
+      console.log("[AgroDiagnostico Server] Ambiente Vercel Serverless detectado. Ignorando setup do Vite/Estáticos.");
+      return;
+    }
+
     if (process.env.NODE_ENV !== "production") {
-      const { createServer: createViteServer } = await import("vite");
+      const nomeModuloVite = "vite";
+      const { createServer: createViteServer } = await import(nomeModuloVite);
       const vite = await createViteServer({
         server: { middlewareMode: true },
         appType: "spa",
@@ -202,14 +210,14 @@ function obterChaveAPI(): string {
     }
 
     // Apenas escuta na porta local se não estivermos no ambiente do Vercel Serverless
-    if (process.env.VERCEL !== "1") {
-      const PORT = 3000;
-      app.listen(PORT, "0.0.0.0", () => {
-        console.log(`[AgroDiagnostico Server] Iniciado na porta http://localhost:${PORT}`);
-      });
-    }
+    const PORT = 3000;
+    app.listen(PORT, "0.0.0.0", () => {
+      console.log(`[AgroDiagnostico Server] Iniciado na porta http://localhost:${PORT}`);
+    });
   }
 
-  setupServer();
+  setupServer().catch((err) => {
+    console.error("[AgroDiagnostico Server] Erro crítico ao carregar setup do servidor:", err);
+  });
 
   export default app;
